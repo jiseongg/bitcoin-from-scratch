@@ -54,6 +54,27 @@ class FieldElement:
         return FieldElement(num, self.prime)
 
 
+class Point:
 
+    def __init__(self, x, y, a, b):
+        """Point on elliptic curve"""
+        self.a = a
+        self.b = b
+        self.x = x
+        self.y = y
+        if self.y**2 != self.x**3 + a*x + b:
+            raise ValueError('({}, {}) is not on the curve'.format(x, y))
 
+    def __eq__(self, other):
+        return self.a == other.a and self.b == other.b \
+                and self.x == other.x and self.y == other.y
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __repr__(self):
+        if self.x is None:
+            return 'Point(infinity)'
+        else:
+            return 'Poinrt({}, {})_{}_{}'.format(self.x, self.y, self.a, self.b)
 
