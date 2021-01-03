@@ -62,6 +62,10 @@ class Point:
         self.b = b
         self.x = x
         self.y = y
+        
+        # addition identity, i.e. point of infinity
+        if self.x is None and self.y is None:
+            return
         if self.y**2 != self.x**3 + a*x + b:
             raise ValueError('({}, {}) is not on the curve'.format(x, y))
 
@@ -75,6 +79,32 @@ class Point:
     def __repr__(self):
         if self.x is None:
             return 'Point(infinity)'
+        elif isinstance(self.x, FieldElement):
+            return 'Point({}, {})_{}_{} FieldElement({})'.format(
+                    self.x.num, self.y.num, self.a.num, self.b.num, self.x.prime)
         else:
-            return 'Poinrt({}, {})_{}_{}'.format(self.x, self.y, self.a, self.b)
+            return 'Point({}, {})_{}_{}'.format(self.x, self.y, self.a, self.b)
+
+    def __add__(self, other):
+        if self.a != other.a and self.b != other.b:
+            raise TypeError('Points {}, {} are not on the save curve.'.format(self, other))
+
+        # addition with identity
+        if self.x is None and self.y is None:
+            return other
+        if other.y is None and other.y is None:
+            return self
+        
+        if self.x != other.x:
+            s = (other.y - self.y) / (other.x - self.x)
+            x = s**2 - self.x - other.x
+            y = s * (self.x - x) - self.y
+            return Point(x, y, self.a, self.b)
+        elif self.y != other.y or self.y == 0:
+            return Point(None, None, self.a, self.b)
+        else:
+            s = (3 * self.x**2 + self.a) / (2 * self.y)
+            x = s**2 - 2 * self.x
+            y = s * (self.x - x) - self.y
+            return Point(x, y, self.a, self.b)
 
