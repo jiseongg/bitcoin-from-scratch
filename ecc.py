@@ -53,6 +53,11 @@ class FieldElement:
         num = self.num * pow(other.num, self.prime - 2, self.prime) % self.prime
         return FieldElement(num, self.prime)
 
+    # scalar multiplication
+    def __rmul__(self, coefficient):
+        num = (self.num * coefficient) % self.prime
+        return FieldElement(num, self.prime)
+
 
 class Point:
 
@@ -100,11 +105,24 @@ class Point:
             x = s**2 - self.x - other.x
             y = s * (self.x - x) - self.y
             return Point(x, y, self.a, self.b)
-        elif self.y != other.y or self.y == 0:
+        elif self.y != other.y or self.y == 0 * self.x:
+            # `0 * self.x`: for the case self.x is FieldElement object
             return Point(None, None, self.a, self.b)
         else:
             s = (3 * self.x**2 + self.a) / (2 * self.y)
             x = s**2 - 2 * self.x
             y = s * (self.x - x) - self.y
             return Point(x, y, self.a, self.b)
+
+    def __rmul__(self, coefficient):
+        coef = coefficient
+        current = self
+        result = Point(None, None, self.a, self.b)
+        while coef:
+            if coef & 1:
+                result += current
+            current += current
+            coef >>= 1
+        return result
+       
 
