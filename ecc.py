@@ -49,10 +49,10 @@ class FieldElement:
         return self.__class__(num, self.prime)
 
     def __truediv__(self, other):
-        """ Implementation of Fermat's little theorem
+        '''Implementation of Fermat's little theorem
         - self.num**(p-1) % p == 1
         - Thus, 1/n == pow(n, p-2, p)
-        """
+        '''
         if self.prime != other.prime:
             raise TypeError('Cannot divide two numbers in different Fields')
         num = self.num * pow(other.num, self.prime - 2, self.prime) % self.prime
@@ -67,7 +67,7 @@ class FieldElement:
 class Point:
 
     def __init__(self, x, y, a, b):
-        """Point on elliptic curve"""
+        '''Point on elliptic curve'''
         self.a = a
         self.b = b
         self.x = x
