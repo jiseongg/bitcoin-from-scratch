@@ -1,4 +1,5 @@
 from random import randint
+from util import hash160, hash256, encode_base58_checksum
 
 import hashlib
 import hmac
@@ -189,6 +190,18 @@ class S256Point(Point):
         else:
             return b'\x04' + self.x.num.to_bytes(32, 'big') \
                     + self.y.num.to_bytes(32, 'big')
+
+    def hash160(self, compressed=True):
+        return hash160(self.sec(compressed))
+
+    def address(self, compressed=True, testnet=False):
+        '''Returns the address string'''
+        h160 = self.hash160(compressed)
+        if testnet:
+            prefix = b'\x6f'
+        else:
+            prefix = b'\x00'
+        return encode_base58_checksum(prefix + h160)
 
     def parse(cls, sec_bin):
         '''returns a Point object from a SEC binary (not hex)'''
