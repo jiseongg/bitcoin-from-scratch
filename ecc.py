@@ -203,6 +203,7 @@ class S256Point(Point):
             prefix = b'\x00'
         return encode_base58_checksum(prefix + h160)
 
+    @classmethod
     def parse(cls, sec_bin):
         '''returns a Point object from a SEC binary (not hex)'''
         if sec_bin[0] == 4:
@@ -216,7 +217,7 @@ class S256Point(Point):
         alpha = x**3 + S256Field(B)
         beta = alpha.sqrt()
 
-        if is_even ^ (beta % 2 == 0):
+        if is_even ^ (beta.num % 2 == 0):
             y = S256Field(P - beta.num)
         else:
             y = beta
